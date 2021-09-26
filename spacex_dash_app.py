@@ -48,19 +48,20 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
 
 # TASK 2:
 # Add a callback function for `site-dropdown` as input, `success-pie-chart` as output
-@app.callback(Output(component_id='success-pie-chart', component_property='figure'),
-Input(component_id='site-dropdown', component_property='value'))
-
-def piechart(site_dropdown):
-    if site_dropdown == 'ALL':
-        title_pie = f'Successful Launches for Site {site_dropdown}'
-        fig = px.pie(spacex_df, values=['class'], names = ['Launch Site'], title=title_pie)
+@app.callback(Output(component_id='success-pie-chart',component_property='figure'),
+Input(component_id='site_dropdown',component_property='value'))
+def get_pie_chart(entered_site):
+    filtered_df=spacex_df
+    if entered_site=='All':
+        fig=px.pie(spacex_df,values='class',
+        names='Launch Site',
+        title='Success Count for all launch sites')
         return fig
     else:
-        filtered_drop = spacex_df[spacex_df['Launch Site']==['site_dropdown']]
-        filtered_launch = filtered_drop.groupby(['Launch Site','class']).size().reset_index(name='class count')
-        title_pie = f'Successful Launches for Site {site_dropdown}'
-        fig = px.pie(filtered_launch, values='class count', names='class', title=title_pie)
+        df_site_filtered=spacex_df[spacex_df['Launch Site']==site]
+        filtered_df=spacex_df[spacex_df['Launch Site']==site_dropdown]
+        df1=filtered_df.groupby(['Launch Site','class']).size().reset_index(name='class count')
+        fig=px.pie(df1,values='class',names='Launch Site',title='Success count for'+ site)
         return fig
 
 # TASK 4:
